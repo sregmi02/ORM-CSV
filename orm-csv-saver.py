@@ -30,7 +30,7 @@ class CSV_Saver:
             for line in lines:
                 if line.strip().split(',')[0] == id:
                     found = True
-        if found == True:
+        if found:
             row = input(f"Enter Values (comma separated): ").split(',')
             with open(cls.file_name, 'w') as file:
                 for line in lines:
