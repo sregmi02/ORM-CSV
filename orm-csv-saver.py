@@ -4,14 +4,10 @@ class CSV_Saver:
     #static method for creating a file
     @staticmethod
     def create(file_name, col1, col2, col3):
-        #create a file if it doesn't exist
-        if not os.path.exists(file_name):
-            with open(file_name, 'w') as file:
-                file.write(f"{col1},{col2},{col3}\n")
-                print("File Created")
-        else:
-            print('File Found')
-
+        with open(file_name, 'w') as file:
+            file.write(f"{col1},{col2},{col3},\n")
+            print("File Created")
+        
     #class method for reading a file
     @classmethod
     def read(cls):
@@ -74,7 +70,7 @@ class CSV_Operation(CSV_Saver):
         CSV_Operation.col1 = col1
         CSV_Operation.col2 = col2
         CSV_Operation.col3 = col3
-        super().create(file_name, col1, col2, col3)
+        
 
     #classmethod for adding new records.
     @classmethod
@@ -95,7 +91,20 @@ class CSV_Operation(CSV_Saver):
 
 #main
 file_name =input("Enter file name: ")
-csv_op = CSV_Operation(file_name, "ID", "Name", "Price")
+if not os.path.exists(file_name):
+    col1 = input("Enter Column1 Name: ")
+    col2 = input("Enter Column2 Name: ")
+    col3 = input("Enter Column3 Name: ")
+    csv_op = CSV_Operation(file_name, col1, col2, col3)
+    CSV_Operation.create(file_name, col1, col2, col3)
+else:
+    with open(file_name, 'r') as file:
+        lines = file.readlines()
+        col1, col2, col3 = lines[0].split(',')
+        csv_op = CSV_Operation(file_name, col1, col2, col3)
+
+
+
 
 while True:
     print("Enter an Operation")
