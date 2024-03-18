@@ -6,7 +6,7 @@ class CSV_Saver:
     def create(file_name):
         #create a file if it doesn't exist
         if not os.path.exists(file_name):
-            with open(file_name, 'a') as file:
+            with open(file_name, 'w') as file:
                 cols = input("Enter Column Names(column separated): ").split(',')
                 for i in cols:
                     file.write(f"{i},")
