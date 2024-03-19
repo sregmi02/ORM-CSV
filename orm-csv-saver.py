@@ -21,7 +21,7 @@ class CSV_Saver:
         #read values from file
         found = False
         search = input("Enter Record ID or Name: ")
-        with open(file_name, 'r') as file:
+        with open(cls.file_name, 'r') as file:
             for line in file:
                 if line.strip().split(",")[0] == search or line.strip().split(",")[1] == search:
                     print(line)
