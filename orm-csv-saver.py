@@ -133,7 +133,6 @@ else:
         col1, col2, col3 = lines[0].split(',')
         csv_op = CSV_Operation(file_name, col1, col2, col3)
 
-
 while True:
     print("Enter an Operation")
     print("1. Add Record\n2. Delete Record\n3. Update Record\n4. Read Records\n5. Exit")
