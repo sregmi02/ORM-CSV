@@ -1,66 +1,88 @@
 import os
 #create a parent class CSV_Saver
+
+def validator(id, name, price):
+    if id.isdigit() and (not name.isdigit()) and price.isdigit():
+        return True
+    else:
+        return False
+
 class CSV_Saver:
     #static method for creating a file
     @staticmethod
     def create(file_name, col1, col2, col3):
         with open(file_name, 'w') as file:
-            file.write(f"{col1},{col2},{col3},\n")
+            file.write(f"{col1},{col2},{col3}\n")
             print("File Created")
         
     #class method for reading a file
     @classmethod
     def read(cls):
         #read values from file
-        f = open(cls.file_name, 'r')
-        print(f.read())
+        found = False
+        search = input("Enter Record ID or Name: ")
+        with open(file_name, 'r') as file:
+            for line in file:
+                if line.strip().split(",")[0] == search or line.strip().split(",")[1] == search:
+                    print(line)
+                    found = True
+            if not found:
+                print("Record not Found")
 
     #classmethod for updating existing records
     @classmethod
     def update(cls):
         found = False
         id = input("Enter Record ID to Update: ")
+        updated_lines = []
 
         with open(cls.file_name, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
+            for line in file:
                 if line.strip().split(',')[0] == id:
-                    found = True
-        if found:
-            row = input(f"Enter Values (comma separated): ").split(',')
-            with open(cls.file_name, 'w') as file:
-                for line in lines:
-                    if line.strip().split(',')[0] == id:
-                        file.write(f"{id},")
-                        for i in row:
-                            file.write(f"{i},")
-                        file.write("\n")
+                    try:
+                        id, name, price = input(f"Enter Values (comma separated): ").split(',')
+                    except ValueError:
+                        print("Invalid Input")
+                        return
+                    if not validator(id, name, price):
+                        print("Invalid Input")
+                        return
                     else:
-                        file.write(line)
-                print("Record Updated")
+                        line = ','.join([id, name, price])
+                updated_lines.append(line)
+                    
+        with open(cls.file_name, 'w') as file:
+            for line in updated_lines:
+                file.write(line)
+            
+        if updated_lines:
+            print('Record Updated')
         else:
-            print("Record Not Found")
-
+            print("Record not Found")
+                
     #classmethod for deleting records
     @classmethod   
     def delete(cls):
         #delete records
         deleted = False
         id = input("Enter Record ID: ")
-
+        remaining_lines = []
         with open(cls.file_name, 'r') as file:
-            lines = file.readlines()
-
-        with open(cls.file_name, 'w') as file:
-            for line in lines:
+            for line in file:
                 if line.strip().split(',')[0] == id:
                     deleted = True
-                    continue
+                else:
+                    remaining_lines.append(line)
+
+        with open(cls.file_name, 'w') as file:
+            for line in remaining_lines:
                 file.write(line)
-            if not deleted:
-                print("Record not found")
-            else:
-                print("Record Deleted")
+        
+        if deleted:
+            print("Record Deleted")
+        else:
+            print("Record not Found")
+
 
 #child class inherits csv_saver class
 class CSV_Operation(CSV_Saver):
@@ -76,18 +98,26 @@ class CSV_Operation(CSV_Saver):
     @classmethod
     def write(cls):
         with open(cls.file_name, 'r') as file:
-            lines = file.readlines()
-            rows = input(f"Enter Values for {lines[0].split()} (comma separated): ").split(',')
-            for line in lines:
-                if line.strip().split(',')[0] == rows[0].strip():
+            next(file)
+            try:
+                id, name, price = input(f"Enter Values (comma separated): ").split(',')
+            except ValueError:
+                print("Invalid Input")
+                return
+        
+            if not validator(id,name,price):
+                print("Invalid Input")
+                return
+
+            for line in file:
+                if int(line.strip().split(',')[0]) == int(id):
                     print("ID already exists. Cannot add value.")
                     return
-        with open(cls.file_name, 'a') as file:    
-            for i in rows:
-                file.write(f"{i},")
-            file.write("\n")
+                
+        with open(cls.file_name, 'a') as file:   
+            file.write(f"{id},{name},{price}\n") 
             print("Record Added")
-
+            
 
 #main
 file_name =input("Enter file name: ")
@@ -102,8 +132,6 @@ else:
         lines = file.readlines()
         col1, col2, col3 = lines[0].split(',')
         csv_op = CSV_Operation(file_name, col1, col2, col3)
-
-
 
 
 while True:
